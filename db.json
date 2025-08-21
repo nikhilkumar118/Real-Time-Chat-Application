@@ -1,0 +1,60 @@
+{
+  "users": [
+    {
+      "id": "740Y4ZMSZVbmVzvdHkKJ8",
+      "username": "nikhil1108",
+      "passwordHash": "$2a$10$gZJY2B5/OutKP51lumAOzuYvhpLAH6fQCz34b.SahP/5KDQx0qWt2",
+      "createdAt": 1755767592378
+    },
+    {
+      "id": "tf-5QStW_dQdlllkae8bh",
+      "username": "raks",
+      "passwordHash": "$2a$10$ZrL2uJjvREquvdGzJ1tkBuwpX7LSBAlT/LVdw4ZNtMmwbCMl5djYe",
+      "createdAt": 1755767751979
+    }
+  ],
+  "messages": [
+    {
+      "id": "GrvxDEUdjEbi0fxhP9tzc",
+      "username": "nikhil1108",
+      "room": "Demo",
+      "text": "Hello",
+      "ts": 1755767638574
+    },
+    {
+      "id": "CASNDJOoYtOcYc_VWBSb0",
+      "username": "nikhil1108",
+      "room": "Demo",
+      "text": "Whats up",
+      "ts": 1755767657946
+    },
+    {
+      "id": "9I7OJJk_w2r-pVlpXxjFI",
+      "username": "nikhil1108",
+      "room": "Demo",
+      "text": "ok bye",
+      "ts": 1755767686384
+    },
+    {
+      "id": "l-iJCKwHC6-J_PXsi6t3d",
+      "username": "raks",
+      "room": "Demo",
+      "text": "Lets go to party tonight",
+      "ts": 1755767948611
+    },
+    {
+      "id": "0cWMz0dRW67n5aduwLYj_",
+      "username": "nikhil1108",
+      "room": "Demo",
+      "text": "hello",
+      "ts": 1755769449183
+    },
+    {
+      "id": "3oS8Pvc8meQn9VrUHVTDD",
+      "username": "nikhil1108",
+      "room": "Demo",
+      "text": "lets go to dLF",
+      "ts": 1755769464544
+    }
+  ]
+}
