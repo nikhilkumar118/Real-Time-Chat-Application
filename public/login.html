@@ -2,126 +2,114 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Realtime Chat - Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-<style>
-  body,
-  html {
-    height: 100%;
-    margin: 0;
-    font-family: "Poppins", sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #fff;
-  }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Realtime Chat - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Full page setup */
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            display: flex;
+            justify-content: center;
+            /* center horizontally */
+            align-items: center;
+            /* center vertically */
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+        }
 
-  .login-container {
-    background: rgba(22, 27, 34, 0.95);
-    padding: 2.5rem 2rem;
-    border-radius: 1.2rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-    width: 100%;
-    max-width: 380px;
-    text-align: center;
-    backdrop-filter: blur(6px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+        /* Login card container */
+        .login-container {
+            background: rgba(22, 27, 34, 0.92);
+            padding: 2.5rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
 
-  h2 {
-    font-size: 1.9rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, #58a6ff, #1f6feb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+        /* Title */
+        .login-container h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-  /* Toggle buttons */
-  .toggle-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 2rem;
-    border: 1px solid #30363d;
-    border-radius: 0.8rem;
-    overflow: hidden;
-  }
+        /* Input fields */
+        .login-container input {
+            width: 100%;
+            margin: 0.6rem 0;
+            padding: 0.9rem;
+            border-radius: 0.75rem;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
 
-  .toggle-buttons button {
-    flex: 1;
-    padding: 0.9rem 0;
-    border: none;
-    background: transparent;
-    color: #aaa;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+        .login-container input:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
+        }
 
-  .toggle-buttons button.active {
-    background: linear-gradient(135deg, #58a6ff, #1f6feb);
-    color: #fff;
-  }
+        /* Buttons (Login/Register) */
+        .login-container button {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+        }
 
-  /* Forms */
-  form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+        .login-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(31, 111, 235, 0.4);
+        }
 
-  form input {
-    width: 100%;
-    margin: 0.7rem 0;
-    padding: 0.9rem;
-    border-radius: 0.8rem;
-    border: 1px solid #30363d;
-    background: #0d1117;
-    color: #fff;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-  }
+        /* Toggle buttons (Login / Register tab) */
+        .toggle-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
 
-  form input:focus {
-    outline: none;
-    border-color: #58a6ff;
-    box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
-  }
+        .toggle-buttons button {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 0.75rem;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-  form button {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 1rem;
-    border: none;
-    border-radius: 0.8rem;
-    background: linear-gradient(135deg, #58a6ff, #1f6feb);
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
-  }
-
-  form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(31, 111, 235, 0.4);
-  }
-
-  #error-message {
-    color: #ff6b6b;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-  }
-</style>
-
+        .toggle-buttons button.active,
+        .toggle-buttons button:hover {
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+            color: #fff;
+            border-color: #58a6ff;
+        }
+    </style>
 </head>
 
 <body>
@@ -148,7 +136,7 @@
       <button type="submit">Register</button>
     </form>
 
-    <p id="error-message"></p>
+    <p id="error-message" style="color: #ff6b6b; margin-top: 1rem;"></p>
   </div>
 
   <script>
@@ -158,6 +146,7 @@
     const registerForm = document.getElementById("register-form");
     const errorMsg = document.getElementById("error-message");
 
+    // Toggle logic
     function showLogin() {
       loginTab.classList.add("active");
       registerTab.classList.remove("active");
@@ -177,10 +166,52 @@
     loginTab.addEventListener("click", showLogin);
     registerTab.addEventListener("click", showRegister);
 
-    // URL param for landing
+    // Landing page mode param
     const params = new URLSearchParams(window.location.search);
-    if (params.get("mode") === "register") showRegister();
+    const mode = params.get("mode");
+    if (mode === "register") showRegister();
+
+    // ====== API Calls ======
+    async function apiPost(url, data) {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        return await res.json();
+      } catch (err) {
+        return { error: "Network error" };
+      }
+    }
+
+    // Handle login
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("login-username").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+
+      const result = await apiPost("/api/login", { username, password });
+      if (result.ok) {
+        window.location.href = "/chat"; // redirect on success
+      } else {
+        errorMsg.textContent = result.error || "Login failed";
+      }
+    });
+
+    // Handle register
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("register-username").value.trim();
+      const password = document.getElementById("register-password").value.trim();
+
+      const result = await apiPost("/api/register", { username, password });
+      if (result.ok) {
+        window.location.href = "/chat"; // redirect on success
+      } else {
+        errorMsg.textContent = result.error || "Registration failed";
+      }
+    });
   </script>
 </body>
-
 </html>
