@@ -55,12 +55,17 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
 function setLoggedIn(username) {
   myUsername = username
   meNameEl.textContent = username
+  loginForm.classList.add('hidden')
+  registerForm.classList.add('hidden')
+  document.querySelector('.tabs').classList.add('hidden')
   presenceCard.classList.remove('hidden')
   joinbar.classList.remove('hidden')
   connectSocket()
 }
 function setLoggedOut() {
   myUsername = null
+  loginForm.classList.remove('hidden')
+  document.querySelector('.tabs').classList.remove('hidden')
   presenceCard.classList.add('hidden')
   joinbar.classList.add('hidden')
   msgForm.classList.add('hidden')
@@ -161,7 +166,7 @@ function connectSocket() {
   if (socket) socket.disconnect()
   socket = io({ withCredentials: true })
 
-  socket.on('connect', () => {})
+  socket.on('connect', () => { })
   socket.on('unauthorized', () => alert('Please login again.'))
 
   // Normal group chat events
@@ -234,10 +239,10 @@ function formatTime(ts) {
 function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight }
 
 // --- Session auto-login ---
-;(async () => {
+; (async () => {
   try {
     const res = await fetch('/api/me')
     const data = await res.json()
     if (data && data.user) setLoggedIn(data.user.username)
-  } catch {}
+  } catch { }
 })()
