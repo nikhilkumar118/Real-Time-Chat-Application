@@ -99,6 +99,7 @@ registerForm.addEventListener('submit', async (e) => {
 logoutBtn.addEventListener('click', async () => {
   await api('/api/logout', {})
   setLoggedOut()
+  window.location.href = '/';
 })
 
 // --- Group Chat ---
@@ -167,7 +168,10 @@ function connectSocket() {
   socket = io({ withCredentials: true })
 
   socket.on('connect', () => { })
-  socket.on('unauthorized', () => alert('Please login again.'))
+  socket.on('unauthorized', () => {
+    alert('Please login again.')
+    window.location.href = '/login'
+  })
 
   // Normal group chat events
   socket.on('systemMessage', (text) => addSystem(text))
@@ -203,11 +207,11 @@ function connectSocket() {
     startOmegleBtn.classList.remove('hidden')
   })
   socket.on('youDisconnected', () => {
-    addSystemMessage("⚠️ You disconnected from chat.")
+    addSystem("⚠️ You disconnected from chat.")
   })
 
   socket.on('strangerLeft', () => {
-    addSystemMessage("⚠️ Stranger disconnected.")
+    addSystem("⚠️ Stranger disconnected.")
   })
 }
 

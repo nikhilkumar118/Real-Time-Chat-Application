@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Realtime Chat — Connect in Real-Time, Anytime</title>
+    <meta name="description"
+        content="A modern landing page for a real-time chat application with subtle animated waves." />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f16;
+            --card: rgba(255, 255, 255, 0.06);
+            --text: #eaf2ff;
+            --muted: #9fb2cc;
+            --primary: #6ea8ff;
+            --primary-2: #7b61ff;
+            --accent: #24d2d3;
+            --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            --radius: 18px;
+            --maxw: 1140px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+            color: var(--text);
+            background: radial-gradient(1200px 800px at 75% -10%, #172035 10%, transparent 60%), var(--bg);
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--maxw);
+            margin: 0 auto;
+            padding: 0 24px
+        }
+
+        /* NAVBAR */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: linear-gradient(180deg, rgba(11, 15, 22, .8), rgba(11, 15, 22, .45));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+
+        .brand .logo-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, var(--primary), var(--primary-2), var(--accent), var(--primary));
+            box-shadow: 0 0 16px rgba(110, 168, 255, .9);
+        }
+
+        /* Center everything inside the hero */
+        .hero>.container {
+            display: grid;
+            place-items: center;
+            min-height: inherit;
+            /* keeps vertical centering */
+        }
+
+
+        .links {
+            display: flex;
+            gap: 28px;
+            align-items: center
+        }
+
+        .links a {
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 14px;
+            opacity: .95
+        }
+
+        .links a:hover {
+            color: var(--text)
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .btn {
+            appearance: none;
+            border: 0;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease, background .2s ease, color .2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #0b0f16;
+            box-shadow: 0 10px 24px rgba(110, 168, 255, .35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px)
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, .16);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, .06)
+        }
+
+        /* MOBILE NAV */
+        .hamburger {
+            display: none;
+            background: transparent;
+            border: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px
+        }
+
+        .hamburger span,
+        .hamburger::before,
+        .hamburger::after {
+            display: block;
+            height: 2px;
+            background: #cfe0ff;
+            margin: 6px;
+            content: "";
+            transition: transform .25s ease, opacity .25s ease;
+        }
+
+        #nav-toggle:checked+label span {
+            opacity: 0
+        }
+
+        #nav-toggle:checked+label::before {
+            transform: translateY(8px) rotate(45deg)
+        }
+
+        #nav-toggle:checked+label::after {
+            transform: translateY(-8px) rotate(-45deg)
+        }
+
+        #nav-toggle {
+            display: none
+        }
+
+        .mobile {
+            display: none
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            min-height: 86vh;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        canvas#waves {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2
+        }
+
+        .glow {
+            position: absolute;
+            inset: -20% -10% auto auto;
+            width: 55vw;
+            height: 55vw;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(36, 210, 211, .18), rgba(36, 210, 211, 0));
+            filter: blur(40px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .03));
+            border: 1px solid rgba(255, 255, 255, .12);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            padding: clamp(28px, 3.8vw, 48px);
+            max-width: 920px;
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(110, 168, 255, .12);
+            color: #bcd2ff;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+            border: 1px solid rgba(110, 168, 255, .25);
+        }
+
+        h1 {
+            margin: 14px 0 10px;
+            font-weight: 800;
+            line-height: 1.05;
+            font-size: clamp(32px, 5.5vw, 64px);
+            letter-spacing: -.02em;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, .25);
+        }
+
+        .lead {
+            margin: 0 auto 26px;
+            max-width: 56ch;
+            color: var(--muted);
+            font-size: clamp(15px, 1.4vw, 18px);
+            line-height: 1.65;
+        }
+
+        .cta-wrap {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .subtle {
+            margin-top: 14px;
+            font-size: 13px;
+            color: #9fb2cc;
+            opacity: .9
+        }
+
+        /* FEATURES */
+        section.features {
+            padding: 72px 0
+        }
+
+        .grid {
+            display: grid;
+            gap: 22px;
+            grid-template-columns: repeat(12, 1fr);
+        }
+
+        .card {
+            grid-column: span 4;
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: transform .2s ease, background .2s ease, border-color .2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, .08);
+            border-color: rgba(255, 255, 255, .16)
+        }
+
+        .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, rgba(110, 168, 255, .35), rgba(123, 97, 255, .35));
+            border: 1px solid rgba(255, 255, 255, .15)
+        }
+
+        .card h3 {
+            margin: 8px 0 6px
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 56px 0;
+            color: #93a8c4;
+            border-top: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .foot {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .foot small {
+            opacity: .85
+        }
+
+        .foot .mini-links {
+            display: flex;
+            gap: 18px
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 960px) {
+
+            .links,
+            .cta-row {
+                display: none
+            }
+
+            .hamburger {
+                display: inline-block
+            }
+
+            .mobile {
+                display: block;
+                background: rgba(11, 15, 22, .9);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 255, 255, .08)
+            }
+
+            .mobile a {
+                display: block;
+                padding: 14px 24px;
+                border-top: 1px solid rgba(255, 255, 255, .06);
+                color: #cfe0ff
+            }
+
+            #nav-toggle:not(:checked)~.mobile {
+                display: none
+            }
+
+            .card {
+                grid-column: span 6
+            }
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                grid-column: 1 / -1
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+
+            .btn,
+            .card {
+                transition: none
+            }
+
+            canvas#waves {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a class="brand" href="#">
+                <span class="logo-dot" aria-hidden="true"></span>
+                <span>Realtime Chat</span>
+            </a>
+
+            <div class="links" aria-label="Primary">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="cta-row">
+                <a class="btn btn-ghost" href="login.html?mode=login">Login</a>
+                <a class="btn btn-primary" href="login.html?mode=register">Get Started</a>
+            </div>
+
+            <input id="nav-toggle" type="checkbox" aria-label="Open menu">
+            <label class="hamburger" for="nav-toggle" aria-hidden="true">
+                <span></span>
+            </label>
+        </div>
+        <div class="mobile container">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <a href="#login">Login</a>
+            <a href="#get-started">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header id="home" class="hero">
+        <canvas id="waves" aria-hidden="true"></canvas>
+        <div class="glow"></div>
+        <div class="container">
+            <div class="hero-card">
+                <span class="eyebrow">Live • Secure • Scalable</span>
+                <h1>Connect in Real-Time, Anytime</h1>
+                <p class="lead">
+                    Lightning-fast messaging for teams and communities. Typing indicators, presence, read receipts,
+                    and end-to-end encryption — all wrapped in a beautiful interface.
+                </p>
+                <div class="cta-wrap" id="get-started">
+                    <a class="btn btn-primary" href="#features">Get Started</a>
+                    <a class="btn btn-ghost" href="#login">Login</a>
+                </div>
+                <div class="subtle">Open-source friendly • Works on Web, iOS & Android</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- FEATURES -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="grid">
+                <article class="card">
+                    <div class="icon">💬</div>
+                    <h3>Realtime Messaging</h3>
+                    <p>Instant delivery powered by websockets. Presence, typing, receipts — all the essentials for
+                        modern chat.</p>
+                </article>
+                <article class="card">
+                    <div class="icon">🔒</div>
+                    <h3>Secure by Design</h3>
+                    <p>Transport encryption, JWT auth, and optional end-to-end rooms to keep conversations locked down.
+                    </p>
+                </article>
+                <article class="card">
+                    <div class="icon">⚡</div>
+                    <h3>Scales Effortlessly</h3>
+                    <p>Horizontally scalable architecture with rooms, sharding, and stateless nodes for massive
+                        concurrency.</p>
+                </article>
+                <article class="card">
+                    <div class="icon">🧩</div>
+                    <h3>Plug-and-Play</h3>
+                    <p>Drop-in SDKs and REST hooks. Integrate bots, webhooks, and moderation pipelines with ease.</p>
+                </article>
+                <article class="card">
+                    <div class="icon">🎨</div>
+                    <h3>Custom Themes</h3>
+                    <p>Dark mode first with flexible theming so your brand feels right at home from day one.</p>
+                </article>
+                <article class="card">
+                    <div class="icon">📈</div>
+                    <h3>Analytics & Insights</h3>
+                    <p>Track engagement, retention, and performance — make data-driven decisions without leaving the
+                        app.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="features" style="padding-top:0">
+        <div class="container">
+            <div class="card" style="grid-column:1/-1">
+                <h3>Why Realtime Chat?</h3>
+                <p style="color:var(--muted); max-width:80ch">
+                    Built for speed and simplicity. This project showcases a production-grade chat experience with
+                    a modern stack and thoughtful UX. The landing page you’re seeing uses a subtle animated wave
+                    canvas to evoke the natural flow of conversation — professional, calm, and on-brand.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT / FOOTER -->
+    <footer id="contact">
+        <div class="container foot">
+            <div class="brand">
+                <span class="logo-dot" aria-hidden="true"></span>
+                <strong>Realtime Chat</strong>
+            </div>
+            <small>© <span id="year"></span> Realtime Chat. All rights reserved.</small>
+            <div class="mini-links">
+                <a href="#privacy">Privacy</a>
+                <a href="#terms">Terms</a>
+                <a href="https://github.com/nikhilkumar118/Real-Time-Chat-Application" target="_blank"
+                    rel="noopener">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Footer year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Subtle animated waves on canvas
+        (function () {
+            const canvas = document.getElementById('waves');
+            const ctx = canvas.getContext('2d');
+            let w, h, dpr, t = 0;
+
+            function resize() {
+                dpr = Math.min(window.devicePixelRatio || 1, 2);
+                w = canvas.clientWidth;
+                h = canvas.clientHeight;
+                canvas.width = Math.round(w * dpr);
+                canvas.height = Math.round(h * dpr);
+                ctx.scale(dpr, dpr);
+            }
+            resize();
+            window.addEventListener('resize', resize, { passive: true });
+
+            // Gradient creators
+            function makeGradient(opacity = 0.55) {
+                const g = ctx.createLinearGradient(0, 0, w, h);
+                g.addColorStop(0, `rgba(110,168,255,${opacity})`); // blue
+                g.addColorStop(.5, `rgba(123,97,255,${opacity})`); // indigo
+                g.addColorStop(1, `rgba(36,210,211,${opacity})`);  // aqua
+                return g;
+            }
+
+            // A soft noise overlay for texture (optional but nice)
+            function noise(y, amp, freq, seed) {
+                return Math.sin((y * freq) + seed) * amp;
+            }
+
+            // Draw multiple layered sine waves
+            function draw() {
+                t += 0.008; // subtle speed
+                ctx.clearRect(0, 0, w, h);
+
+                const layers = [
+                    { amp: 18, len: 1.6, speed: .6, y: h * 0.62, blur: 10, alpha: .35 },
+                    { amp: 26, len: 1.1, speed: .4, y: h * 0.66, blur: 14, alpha: .28 },
+                    { amp: 38, len: 0.8, speed: .25, y: h * 0.70, blur: 22, alpha: .22 },
+                ];
+
+                layers.forEach((L, i) => {
+                    ctx.save();
+                    ctx.filter = `blur(${L.blur}px)`;
+                    ctx.globalAlpha = L.alpha;
+                    ctx.fillStyle = makeGradient(.9);
+
+                    ctx.beginPath();
+                    ctx.moveTo(0, h);
+                    ctx.lineTo(0, L.y);
+
+                    const step = 3; // px
+                    for (let x = 0; x <= w; x += step) {
+                        const y = L.y
+                            + Math.sin((x / (120 * L.len)) + (t * L.speed * 2)) * L.amp
+                            + Math.sin((x / (35 * L.len)) + (t * L.speed * 4)) * (L.amp * 0.25)
+                            + noise(x, 2.0, .015, t * 3);
+                        ctx.lineTo(x, y);
+                    }
+
+                    ctx.lineTo(w, h);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                // Very subtle top vignette
+                const vg = ctx.createLinearGradient(0, 0, 0, h);
+                vg.addColorStop(0, 'rgba(11,15,22,.55)');
+                vg.addColorStop(1, 'rgba(11,15,22,0)');
+                ctx.fillStyle = vg;
+                ctx.fillRect(0, 0, w, h);
+
+                requestAnimationFrame(draw);
+            }
+
+            // Respect reduced motion
+            const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+            if (!media.matches) {
+                requestAnimationFrame(draw);
+            } else {
+                // fallback static gradient
+                ctx.fillStyle = makeGradient(.35);
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        })();
+    </script>
+</body>
+
+</html>

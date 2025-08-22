@@ -6,6 +6,11 @@ import cookieParser from 'cookie-parser'
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 import { db, initDb } from './db.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 const server = http.createServer(app)
@@ -28,6 +33,25 @@ const sessionMiddleware = session({
 })
 app.use(sessionMiddleware)
 io.engine.use(sessionMiddleware)
+
+// --- Serve landing page at root ---
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'landing.html'))
+})
+
+// --- Serve login page ---
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'))
+})
+
+// --- Serve chat application at /chat ---
+app.get('/chat', (req, res) => {
+  // Check if user is authenticated
+  if (!req.session.user) {
+    return res.redirect('/login')
+  }
+  res.sendFile(path.join(__dirname, 'public', 'chat.html'))
+})
 
 // --- Static files ---
 app.use(express.static('public'))
@@ -260,4 +284,4 @@ io.on('connection', (socket) => {
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
 const PORT = process.env.PORT || 3000
-server.listen(PORT, () => console.log(`✅ http://localhost:${PORT}`))
+server.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`))
