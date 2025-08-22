@@ -11,6 +11,24 @@
       "username": "raks",
       "passwordHash": "$2a$10$ZrL2uJjvREquvdGzJ1tkBuwpX7LSBAlT/LVdw4ZNtMmwbCMl5djYe",
       "createdAt": 1755767751979
+    },
+    {
+      "id": "8PPMVVLhoRpVhI97gLflt",
+      "username": "sonu",
+      "passwordHash": "$2a$10$kFj7LSSyZ3XnIbqCMAqvse4Ii5Je4TggSvx0uN0FiFy00QP5qBQKm",
+      "createdAt": 1755798429083
+    },
+    {
+      "id": "rfM_-suKUI45MLoghtjx-",
+      "username": "nikki",
+      "passwordHash": "$2a$10$wW.2qy2LQtHYCraRfJCSFuh7nEpy1WnErXMRJ3mLnUfp.iy6jRF5y",
+      "createdAt": 1755798472650
+    },
+    {
+      "id": "lgisaxKH2DDrd8C0_kIf4",
+      "username": "nikki1",
+      "passwordHash": "$2a$10$efRAyQKSygpCRvKYlzZ43.9dq2K9rJYcBAaFsjYlxmd3xb3iWyEJS",
+      "createdAt": 1755798523140
     }
   ],
   "messages": [

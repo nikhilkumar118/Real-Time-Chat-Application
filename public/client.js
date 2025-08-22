@@ -15,6 +15,7 @@ const roomNameEl = document.getElementById('roomName')
 const roomCountEl = document.getElementById('roomCount')
 const switchBtn = document.getElementById('switchBtn')
 const logoutBtn = document.getElementById('logoutBtn')
+const omegleBtn = document.getElementById('omegleBtn')
 
 const joinbar = document.getElementById('joinbar')
 const joinForm = document.getElementById('joinForm')
@@ -25,11 +26,18 @@ const msgForm = document.getElementById('msgForm')
 const msgInput = document.getElementById('msgInput')
 const typingEl = document.getElementById('typing')
 
+// Omegle elements
+const omegleSection = document.getElementById('omegleSection')
+const startOmegleBtn = document.getElementById('startOmegleBtn')
+const leaveOmegleBtn = document.getElementById('leaveOmegleBtn')
+const omegleStatus = document.getElementById('omegleStatus')
+
 let myUsername = null
 let myRoom = null
+let inOmegle = false
 let typingTimeout = null
 
-// Tabs
+// Tabs (login/register toggle)
 tabs.forEach(btn => btn.addEventListener('click', () => {
   tabs.forEach(b => b.classList.remove('active'))
   btn.classList.add('active')
@@ -43,13 +51,12 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   }
 }))
 
-// Helpers
+// --- Helpers ---
 function setLoggedIn(username) {
   myUsername = username
   meNameEl.textContent = username
   presenceCard.classList.remove('hidden')
   joinbar.classList.remove('hidden')
-  // connect socket
   connectSocket()
 }
 function setLoggedOut() {
@@ -57,12 +64,11 @@ function setLoggedOut() {
   presenceCard.classList.add('hidden')
   joinbar.classList.add('hidden')
   msgForm.classList.add('hidden')
+  omegleSection.classList.add('hidden')
   messagesEl.innerHTML = ''
   typingEl.textContent = ''
   if (socket) { socket.disconnect(); socket = null }
 }
-
-// API calls
 async function api(path, body) {
   const res = await fetch(path, {
     method: 'POST',
@@ -72,33 +78,25 @@ async function api(path, body) {
   return res.json()
 }
 
-// Auth flows
+// --- Auth flows ---
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   const data = await api('/api/login', { username: loginUser.value, password: loginPass.value })
-  if (data && data.user) {
-    setLoggedIn(data.user.username)
-  } else {
-    alert(data.error || 'Login failed')
-  }
+  if (data && data.user) setLoggedIn(data.user.username)
+  else alert(data.error || 'Login failed')
 })
-
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   const data = await api('/api/register', { username: regUser.value, password: regPass.value })
-  if (data && data.user) {
-    setLoggedIn(data.user.username)
-  } else {
-    alert(data.error || 'Registration failed')
-  }
+  if (data && data.user) setLoggedIn(data.user.username)
+  else alert(data.error || 'Registration failed')
 })
-
 logoutBtn.addEventListener('click', async () => {
   await api('/api/logout', {})
   setLoggedOut()
 })
 
-// Join room
+// --- Group Chat ---
 joinForm.addEventListener('submit', (e) => {
   e.preventDefault()
   myRoom = roomInput.value.trim() || 'general'
@@ -107,48 +105,71 @@ joinForm.addEventListener('submit', (e) => {
   msgForm.classList.remove('hidden')
   socket.emit('join', { room: myRoom })
 })
+switchBtn.addEventListener('click', () => {
+  joinbar.classList.remove('hidden')
+  omegleSection.classList.add('hidden')
+  inOmegle = false
+  addSystem('➡️ Switched to Group Chat mode.')
+})
 
-// Send message
+// --- Omegle Chat ---
+omegleBtn.addEventListener('click', () => {
+  messagesEl.innerHTML = ''
+  typingEl.textContent = ''
+  joinbar.classList.add('hidden')
+  omegleSection.classList.remove('hidden')
+  inOmegle = true
+  addSystem('🎭 Omegle mode activated. Click "Find Stranger" to start.')
+})
+startOmegleBtn.addEventListener('click', () => {
+  if (!socket) return
+  messagesEl.innerHTML = ''
+  omegleStatus.textContent = '⌛ Waiting for a partner...'
+  socket.emit('findStranger')
+})
+leaveOmegleBtn.addEventListener('click', () => {
+  if (!socket) return
+  socket.emit('leaveStranger')
+  omegleStatus.textContent = '❌ You left the chat.'
+  leaveOmegleBtn.classList.add('hidden')
+  startOmegleBtn.classList.remove('hidden')
+})
 
-
+// --- Messages ---
 msgForm.addEventListener('submit', (e) => {
   e.preventDefault()
   const text = msgInput.value.trim()
   if (!text) return
-  socket.emit('chatMessage', text)   // just emit
+  if (inOmegle) {
+    socket.emit('strangerMessage', text)
+  } else {
+    socket.emit('chatMessage', text)
+  }
   msgInput.value = ''
   msgInput.focus()
   socket.emit('typing', false)
 })
-
-
-// Typing indicator
 msgInput.addEventListener('input', () => {
-  if (!socket) return
+  if (!socket || inOmegle) return
   socket.emit('typing', true)
   clearTimeout(typingTimeout)
   typingTimeout = setTimeout(() => socket.emit('typing', false), 900)
 })
 
-// Switch room
-switchBtn.addEventListener('click', () => {
-  const newRoom = prompt('Enter new room name:')
-  if (!newRoom || newRoom === myRoom) return
-  myRoom = newRoom
-  roomNameEl.textContent = myRoom
-  messagesEl.innerHTML = ''
-  socket.emit('join', { room: myRoom })
-})
-
-// Socket connection
+// --- Socket ---
 function connectSocket() {
   if (socket) socket.disconnect()
   socket = io({ withCredentials: true })
-  socket.on('connect', () => { /* connected */ })
+
+  socket.on('connect', () => {})
   socket.on('unauthorized', () => alert('Please login again.'))
+
+  // Normal group chat events
   socket.on('systemMessage', (text) => addSystem(text))
   socket.on('chatMessage', (msg) => addMessage(msg, msg.username === myUsername))
-  socket.on('typing', ({ username, isTyping }) => typingEl.textContent = isTyping ? `${username} is typing…` : '')
+  socket.on('typing', ({ username, isTyping }) =>
+    typingEl.textContent = isTyping ? `${username} is typing…` : ''
+  )
   socket.on('presence', ({ room, count }) => {
     if (room === myRoom) roomCountEl.textContent = String(count)
   })
@@ -156,9 +177,36 @@ function connectSocket() {
     items.forEach(m => addMessage(m, m.username === myUsername))
     scrollBottom()
   })
+
+  // Omegle events
+  socket.on('waitingStranger', () => {
+    omegleStatus.textContent = '⌛ Waiting for a partner...'
+    startOmegleBtn.classList.add('hidden')
+    leaveOmegleBtn.classList.remove('hidden')
+  })
+  socket.on('strangerFound', () => {
+    omegleStatus.textContent = '🎉 Connected to a stranger!'
+    msgForm.classList.remove('hidden')
+    startOmegleBtn.classList.add('hidden')
+    leaveOmegleBtn.classList.remove('hidden')
+  })
+  socket.on('strangerMessage', (msg) => addMessage(msg, msg.username === myUsername))
+  socket.on('strangerLeft', () => {
+    omegleStatus.textContent = '⚠️ Stranger disconnected.'
+    addSystem('⚠️ Stranger disconnected.')
+    leaveOmegleBtn.classList.add('hidden')
+    startOmegleBtn.classList.remove('hidden')
+  })
+  socket.on('youDisconnected', () => {
+    addSystemMessage("⚠️ You disconnected from chat.")
+  })
+
+  socket.on('strangerLeft', () => {
+    addSystemMessage("⚠️ Stranger disconnected.")
+  })
 }
 
-// UI helpers
+// --- UI helpers ---
 function addSystem(text) {
   const li = document.createElement('li')
   li.className = 'system'
@@ -180,11 +228,12 @@ function addMessage({ username, text, ts }, isMe = false) {
   scrollBottom()
 }
 function formatTime(ts) {
-  try { return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) } catch { return '' }
+  try { return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+  catch { return '' }
 }
 function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight }
 
-// Auto-check session on load
+// --- Session auto-login ---
 ;(async () => {
   try {
     const res = await fetch('/api/me')

@@ -11,11 +11,13 @@
     <aside class="sidebar">
       <h1>💬 Realtime Chat</h1>
 
+      <!-- Auth Tabs -->
       <div class="tabs">
         <button class="tab active" data-tab="login">Login</button>
         <button class="tab" data-tab="register">Register</button>
       </div>
 
+      <!-- Login -->
       <form id="loginForm" class="form">
         <label>Username</label>
         <input id="loginUser" type="text" required />
@@ -24,6 +26,7 @@
         <button type="submit">Login</button>
       </form>
 
+      <!-- Register -->
       <form id="registerForm" class="form hidden">
         <label>Username</label>
         <input id="regUser" type="text" required />
@@ -32,24 +35,43 @@
         <button type="submit">Create account</button>
       </form>
 
+      <!-- Presence & Actions -->
       <div class="presence hidden" id="presence">
         <div>User: <span id="meName">-</span></div>
         <div>Room: <span id="roomName">-</span></div>
         <div>Online: <span id="roomCount">0</span></div>
-        <button id="switchBtn" title="Switch room">Switch Room</button>
+
+        <button id="switchBtn" title="Switch group room">Join Group Chat</button>
+        <button id="omegleBtn" title="Start Omegle">Start Random Chat</button>
         <button id="logoutBtn" class="danger" title="Logout">Logout</button>
+      </div>
+
+      <hr />
+
+      <!-- Omegle Mode -->
+      <div id="omegleSection" class="hidden">
+        <h3>🎭 Omegle Mode</h3>
+        <button id="startOmegleBtn">Find Stranger</button>
+        <button id="leaveOmegleBtn" class="danger hidden">Leave</button>
+        <p id="omegleStatus" class="status"></p>
       </div>
     </aside>
 
+    <!-- Main Chat Area -->
     <main class="chat">
+      <!-- Join group room -->
       <div class="joinbar hidden" id="joinbar">
         <form id="joinForm">
           <input id="room" type="text" placeholder="Room (e.g. general)" required />
           <button type="submit">Join</button>
         </form>
       </div>
+
+      <!-- Messages -->
       <ul id="messages"></ul>
       <div id="typing" class="typing"></div>
+
+      <!-- Message form -->
       <form id="msgForm" class="msgForm hidden" autocomplete="off">
         <input id="msgInput" placeholder="Type a message…" />
         <button type="submit">Send</button>
